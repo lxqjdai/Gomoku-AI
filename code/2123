@@ -1,0 +1,325 @@
+def Check_4_in_line(new_board, move, side):  # move 表示检查那个点附近 side表示检查哪一边的，num表示检查连续几个
+    num = 3
+    x, y = move
+    min_x = max(0, x - num-1)
+    max_x = min(MAX_BOARD - 1, x + num+1)
+    min_y = max(0, y - num-1)
+    max_y = min(MAX_BOARD - 1, y + num+1)
+    force_move_all = []
+    count = 1
+    force_move = []
+    for i in range(min_x + 1, max_x + 1):  # 竖着4个
+        if new_board[i][y] == side and new_board[i - 1][y] == side:
+            count += 1
+        else:
+            count = 1
+        end_pos = (i, y)  # 记录最后的位置
+        if count == 4: # 检查xxxx的情况 
+            x1, y1 = end_pos
+            if x1 + 1 <= MAX_BOARD - 1 and new_board[x1 + 1][y1] == 0:  # 往后一格看看行不行
+                force_move.append((x1 + 1, y1))
+            if x1 - num - 1 >= 0 and new_board[x1 - num - 1][y1] == 0:
+                force_move.append((x1 - num - 1, y1))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == 3: # 检查 xxx x 或者x xxx的情况 
+            x1,y1 = end_pos
+            if x1 + 2 <= MAX_BOARD - 1 and new_board[x1 + 1][y1] == 0 and new_board[x1+2][y1] == side:
+                force_move.append((x1+1,y1))
+            if x1 - num - 1 >= 0 and new_board[x1-num][y1] == 0 and new_board[x1-num-1][y1] == side:
+                force_move.append((x1-num,y1))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == 2: # 检查 xx xx 的情况 
+            x1,y1 = end_pos
+            if x1 + 3 <= MAX_BOARD-1 and board[x1+1][y1]==0 and board[x1+2][y1]==side and board[x1+3][y1]==side:
+                force_move.append((x1+1,y1))
+            if x1 - 4 >= 0 and board[x1-2][y1]==0 and board[x1-3][y1]==side and board[x1-4][y1]==side:
+                force_move.append((x1-2,y1))
+            if len(force_move)!=0:
+                force_move_all.append(force_move)
+
+
+    count = 1
+    force_move = []
+    for i in range(min_y + 1, max_y + 1):  # 横着的4个
+        if new_board[x][i] == side and new_board[x][i - 1] == side:
+            count += 1
+        else:
+            count = 1
+        end_pos = (x, i)  # 记录最后的位置
+        if count == 4: # 检查正常 xxx 情况 num = 2 count = 3
+            x1, y1 = end_pos
+            if y1 + 1 <= MAX_BOARD - 1 and new_board[x1][y1 + 1] == 0:  # 往后一格看看行不行
+                force_move.append((x1, y1 + 1))
+            if y1 - num - 1 >= 0 and new_board[x1][y1 - num - 1] == 0: # 往前看一格行不行
+                force_move.append((x1, y1 - num - 1))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == 3: # 检查xx x 或者x xx的情况 num = 2 count = 2
+            x1,y1 = end_pos
+            if y1 + 2 <= MAX_BOARD - 1 and new_board[x1][y1+1] == 0 and new_board[x1][y1+2] == side:
+                force_move.append((x1,y1+1))
+            if y1 - num - 1 >= 0 and new_board[x1][y1-num] == 0 and new_board[x1][y1-num-1] == side:
+                force_move.append((x1,y1-num))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == 2: # 检查 xx xx 的情况 
+            x1,y1 = end_pos
+            if y1 + 3 <= MAX_BOARD-1 and board[x1][y1+1]==0 and board[x1][y1+2]==side and board[x1][y1+3]==side:
+                force_move.append((x1,y1+1))
+            if y1 - 4 >= 0 and board[x1][y1-2]==0 and board[x1][y1-3]==side and board[x1][y1-4]==side:
+                force_move.append((x1,y1-2))
+            if len(force_move)!=0:
+                force_move_all.append(force_move)
+
+    count = 1
+    force_move = []
+    down = min(x-min_x, y-min_y)
+    up = min(max_x-x,max_y-y)
+    for m in range(-down, up): # 正斜的时候
+        i = x + m + 1
+        j = y + m + 1
+        if new_board[i][j] == side and new_board[i - 1][j - 1] == side:
+            count += 1
+        else:
+            count = 1
+        end_pos = (i, j)  # 记录最后的位置
+        if count == 4: # 检查xxx的情况 num = 2 count = 3
+            x1, y1 = end_pos
+            if x1 + 1 <= MAX_BOARD - 1 and y1 + 1 <= MAX_BOARD - 1 and new_board[x1 + 1][y1 + 1] == 0:  # 往后一格看看行不行
+                force_move.append((x1 + 1, y1 + 1))
+            if x1 - num - 1 >= 0 and y1 - num - 1 >= 0 and new_board[x1 - num - 1][y1 - num - 1] == 0: # 往前看一格行不行
+                force_move.append((x1 - num - 1, y1 - num - 1))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == 3:  # 检查xxx x 或者x xxx的情况
+            x1,y1 = end_pos
+            if x1 + 2 <= MAX_BOARD - 1 and y1 + 2 <= MAX_BOARD - 1 and new_board[x1+1][y1+1] == 0 and new_board[x1+2][y1+2] == side:
+                force_move.append((x1+1,y1+1))
+            if x1 - num - 1 >= 0  and y1 - num - 1 >= 0 and new_board[x1-num][y1-num] == 0 and new_board[x1-num-1][y1-num-1] == side:
+                force_move.append((x1-num,y1-num))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == 2: # 检查 xx xx 的情况 
+            x1,y1 = end_pos
+            if x1+3<=MAX_BOARD-1 and y1 + 3 <= MAX_BOARD-1 and board[x1+1][y1+1]==0 and board[x1+2][y1+2]==side and board[x1+3][y1+3]==side:
+                force_move.append((x1+1,y1+1))
+            if x1-4>=0 and y1 - 4 >= 0 and board[x1-2][y1-2]==0 and board[x1-3][y1-3]==side and board[x1-4][y1-4]==side:
+                force_move.append((x1-2,y1-2))
+            if len(force_move)!=0:
+                force_move_all.append(force_move)
+
+    
+    count = 1
+    force_move = []
+    down = min(max_y-y,x-min_x)
+    up = min(max_x - x, y - min_y)
+    for m in range(-down, up): # 检查侧斜的情况
+        i = x + m + 1
+        j = y - m - 1
+        if new_board[i][j] == side and new_board[i - 1][j + 1] == side:
+            count += 1
+            end_pos = (i, j) # 记录终点位置
+        else:
+            count = 1
+        if count == num + 1: # 检查xxx的情况 num = 2 count = 3
+            x1, y1 = end_pos
+            if x1 + 1 <= MAX_BOARD - 1 and y1 - 1 >= 0 and new_board[x1 + 1][y1 - 1] == 0:  # 往后一格看看行不行
+                force_move.append((x1 + 1, y1 - 1))
+            if x1 - num - 1 >= 0 and y1 + num + 1 <= MAX_BOARD - 1 and new_board[x1 - num - 1][y1 + num + 1] == 0: # 往前看一步行不行
+                force_move.append((x1 - num - 1, y1 + num + 1))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == num:  # 检查xxx x 或者x xxx的情况 num = 2 count = 2
+            x1,y1 = end_pos
+            if x1 + 2 <= MAX_BOARD - 1 and y1 - 2 >= 0 and new_board[x1+1][y1-1] == 0 and new_board[x1+2][y1-2] == side:
+                force_move.append((x1+1,y1-1))
+            if x1 - num - 1 >= 0  and y1 + num + 1 <= MAX_BOARD-1 and new_board[x1-num][y1+num] == 0 and new_board[x1-num-1][y1+num+1] == side:
+                force_move.append((x1-num,y1+num))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == 2: # 检查 xx xx 的情况 
+            x1,y1 = end_pos
+            if x1+3<=MAX_BOARD-1 and y1 - 3 >= 0  and board[x1+1][y1-1]==0 and board[x1+2][y1-2]==side and board[x1+3][y1-3]==side:
+                force_move.append((x1+1,y1-1))
+            if x1-4>=0 and y1 + 4 <= MAX_BOARD -1 and board[x1-2][y1+2]==0 and board[x1-3][y1+3]==side and board[x1-4][y1+4]==side:
+                force_move.append((x1-2,y1+2))
+            if len(force_move)!=0:
+                force_move_all.append(force_move)
+
+
+    longest_force = 0
+    best_force = []
+    for force_move in force_move_all:
+        if len(force_move) > longest_force:
+            best_force = force_move
+    return best_force
+
+def Check_3_in_line(new_board, move, side):  # move 表示检查那个点附近 side表示检查哪一边的，num表示检查连续几个
+    num = 2
+    x, y = move
+    min_x = max(0, x - num-1)
+    max_x = min(MAX_BOARD - 1, x + num+1)
+    min_y = max(0, y - num-1)
+    max_y = min(MAX_BOARD - 1, y + num+1)
+    force_move_all = []
+    count = 1
+    force_move = []
+    for i in range(min_x + 1, max_x + 1):  # 竖着3个
+        if new_board[i][y] == side and new_board[i - 1][y] == side:
+            count += 1
+        else:
+            count = 1
+        end_pos = (i, y)  # 记录最后的位置
+        if count == 3: # 检查xxx的情况
+            x1, y1 = end_pos
+            if x1 + 1 <= MAX_BOARD - 1 and new_board[x1 + 1][y1] == 0:  # 往后一格看看行不行
+                force_move.append((x1 + 1, y1))
+            if x1 - num - 1 >= 0 and new_board[x1 - num - 1][y1] == 0:
+                force_move.append((x1 - num - 1, y1))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == 2: # 检查 ** * 或者* **的情况 num = 2 count = 2
+            x1,y1 = end_pos
+            if x1 + 2 <= MAX_BOARD - 1 and new_board[x1 + 1][y1] == 0 and new_board[x1+2][y1] == side:
+                force_move.append((x1+1,y1))
+                if x1+3 <= MAX_BOARD - 1 and new_board[x1+3][y1]==0:#检查xx xo
+                    force_move.append((x1+3,y1))
+                if x1-2 >= 0 and new_board[x1-2][y1]==0:#检查oxx x
+                    force_move.append((x1-2,y1))
+            if x1 - num - 1 >= 0 and new_board[x1-num][y1] == 0 and new_board[x1-num-1][y1] == side:
+                force_move.append((x1-num,y1))
+                if x1+1 <= MAX_BOARD-1 and new_board[x1+1][y1]==0:#检查x xxo
+                    force_move.append((x1+1,y1))
+                if x1-4>=0 and new_board[x1-4][y1]==0:#检查ox xx
+                    force_move.append((x1-4,y1))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+
+
+    count = 1
+    force_move = []
+    for i in range(min_y + 1, max_y + 1):  # 横着的num个
+        if new_board[x][i] == side and new_board[x][i - 1] == side:
+            count += 1
+            end_pos = (x, i)  # 记录最后的位置
+        else:
+            count = 1
+        if count == 3: # 检查正常 xxx 情况 num = 2 count = 3
+            x1, y1 = end_pos
+            if y1 + 1 <= MAX_BOARD - 1 and new_board[x1][y1 + 1] == 0:  # 往后一格看看行不行
+                force_move.append((x1, y1 + 1))
+            if y1 - num - 1 >= 0 and new_board[x1][y1 - num - 1] == 0: # 往前看一格行不行
+                force_move.append((x1, y1 - num - 1))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == 2: # 检查xx x 或者x xx的情况 num = 2 count = 2
+            x1,y1 = end_pos
+            if y1 + 2 <= MAX_BOARD - 1 and new_board[x1][y1+1] == 0 and new_board[x1][y1+2] == side:
+                force_move.append((x1,y1+1))
+                if y1+3 <= MAX_BOARD - 1 and new_board[x1][y1+3]==0:#检查xx xo
+                    force_move.append((x1,y1+3))
+                if y1-2 >= 0 and new_board[x1][y1-2]==0:#检查oxx x
+                    force_move.append((x1,y1-2))
+            if y1 - num - 1 >= 0 and new_board[x1][y1-num] == 0 and new_board[x1][y1-num-1] == side:
+                force_move.append((x1,y1-num))
+                if y1+1 <= MAX_BOARD-1 and new_board[x1][y1+1]==0:#检查x xxo
+                    force_move.append((x1,y1+1))
+                if y1-4>=0 and new_board[x1][y1-4]==0:#检查ox xx
+                    force_move.append((x1,y1-4))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+
+    count = 1
+    force_move = []
+    down = min(x-min_x, y-min_y)
+    up = min(max_x-x,max_y-y)
+    for m in range(-down, up): # 正斜的时候
+        i = x + m + 1
+        j = y + m + 1
+        if new_board[i][j] == side and new_board[i - 1][j - 1] == side:
+            count += 1
+            end_pos = (i, j)  # 记录最后的位置
+        else:
+            count = 1
+        if count == num + 1: # 检查xxx的情况 num = 2 count = 3
+            x1, y1 = end_pos
+            if x1 + 1 <= MAX_BOARD - 1 and y1 + 1 <= MAX_BOARD - 1 and new_board[x1 + 1][y1 + 1] == 0:  # 往后一格看看行不行
+                force_move.append((x1 + 1, y1 + 1))
+            if x1 - num - 1 >= 0 and y1 - num - 1 >= 0 and new_board[x1 - num - 1][y1 - num - 1] == 0: # 往前看一格行不行
+                force_move.append((x1 - num - 1, y1 - num - 1))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == num:  # 检查xx x 或者x xx的情况 num = 2 count = 3
+            x1,y1 = end_pos
+            if x1 + 2 <= MAX_BOARD - 1 and y1 + 2 <= MAX_BOARD - 1 and new_board[x1+1][y1+1] == 0 and new_board[x1+2][y1+2] == side:
+                force_move.append((x1+1,y1+1))
+                if x1+3<=MAX_BOARD-1 and y1+3 <= MAX_BOARD - 1 and new_board[x1+3][y1+3]==0:#检查xx xo
+                    force_move.append((x1+3,y1+3))
+                if x1-2>=0 and y1-2 >= 0 and new_board[x1-2][y1-2]==0:#检查oxx x
+                    force_move.append((x1-2,y1-2))
+            if x1 - num - 1 >= 0  and y1 - num - 1 >= 0 and new_board[x1-num][y1-num] == 0 and new_board[x1-num-1][y1-num-1] == side:
+                force_move.append((x1-num,y1-num))
+                if x1+1 <= MAX_BOARD-1 and y1+1 <= MAX_BOARD-1 and new_board[x1+1][y1+1]==0:#检查x xxo
+                    force_move.append((x1+1,y1+1))
+                if x1-4>=0 and y1-4>=0 and new_board[x1-4][y1-4]==0:#检查ox xx
+                    force_move.append((x1-4,y1-4))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+
+    count = 1
+    force_move = []
+    down = min(max_y-y,x-min_x)
+    up = min(max_x - x, y - min_y)
+    for m in range(-down, up): # 检查侧斜的情况
+        i = x + m + 1
+        j = y - m - 1
+        if new_board[i][j] == side and new_board[i - 1][j + 1] == side:
+            count += 1
+            end_pos = (i, j) # 记录终点位置
+        else:
+            count = 1
+        if count == num + 1: # 检查xxx的情况 num = 2 count = 3
+            x1, y1 = end_pos
+            if x1 + 1 <= MAX_BOARD - 1 and y1 - 1 >= 0 and new_board[x1 + 1][y1 - 1] == 0:  # 往后一格看看行不行
+                force_move.append((x1 + 1, y1 - 1))
+            if x1 - num - 1 >= 0 and y1 + num + 1 <= MAX_BOARD - 1 and new_board[x1 - num - 1][y1 + num + 1] == 0: # 往前看一步行不行
+                force_move.append((x1 - num - 1, y1 + num + 1))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+        if count == num:  # 检查xx x 或者x xx的情况 num = 2 count = 2
+            x1,y1 = end_pos
+            if x1 + 2 <= MAX_BOARD - 1 and y1 - 2 >= 0 and new_board[x1+1][y1-1] == 0 and new_board[x1+2][y1-2] == side:
+                force_move.append((x1+1,y1-1))
+            if x1 - num - 1 >= 0  and y1 + num + 1 <= MAX_BOARD-1 and new_board[x1-num][y1+num] == 0 and new_board[x1-num-1][y1+num+1] == side:
+                force_move.append((x1-num,y1+num))
+                if x1+3<=MAX_BOARD-1 and y1-3 >= 0 and new_board[x1+3][y1-3]==0:#检查xx xo
+                    force_move.append((x1+3,y1-3))
+                if x1-4>=0 and y1+4 <= MAX_BOARD-1 and new_board[x1-4][y1+4]==0:#检查oxx x
+                    force_move.append((x1-4,y1+4))
+            if len(force_move) != 0:
+                force_move_all.append(force_move)
+                break
+
+    longest_force = 0
+    best_force = []
+    for force_move in force_move_all:
+        if len(force_move) > longest_force:
+            best_force = force_move
+    return best_force
